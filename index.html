@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Pizzeria">
+<title>Pizzeria</title>
+<style>
+:root{--bg:#f2f2f5;--card:#fff;--fg:#111;--mut:#777;--in:#eceff3;--ac:#34c759;--bt:#dcdce2;--ln:#d6d6dc;box-sizing:border-box;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mut:#98989f;--in:#0b0b0c;--bt:#3a3a3c;--ln:#38383a}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:17px -apple-system,Helvetica,Arial,sans-serif;display:flex;gap:10px;padding:10px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:0;border-radius:26px;background:var(--bt);padding:12px 16px;cursor:pointer;font-weight:600}
+button.g{background:var(--ac);color:#fff}button.s{padding:6px 12px;font-size:15px}
+input,textarea{width:100%;background:var(--in);border:0;border-radius:10px;padding:12px;margin:0}
+.p{background:var(--card);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0}
+#L{flex:1.15}#R{flex:1;overflow:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button.on{background:var(--ac);color:#fff}
+#list{overflow:auto;flex:1}
+.d{display:flex;justify-content:space-between;gap:8px;padding:14px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.d b{color:var(--mut);margin-right:8px}.l{padding:8px 0;border-bottom:1px solid var(--ln)}
+.r{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.m{color:var(--mut);font-size:14px}.sum{font-size:32px;font-weight:800}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:stretch;justify-content:center;padding:env(safe-area-inset-top,0) 0 0;z-index:5}
+.sh{background:var(--card);width:min(960px,100%);margin:12px;border-radius:18px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.sh>.hd{display:flex;justify-content:space-between;align-items:center;padding:12px;gap:8px}
+.sh>.bd{flex:1;overflow:auto;padding:12px}.sh>.ft{padding:12px calc(12px + env(safe-area-inset-bottom,0))}
+.sh>.ft button{width:100%;height:64px;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid button{height:76px;border-radius:38px;line-height:1.2}.grid button.on{background:var(--ac);color:#fff}
+.grid small{display:block;font-weight:400;opacity:.8}
+pre{font:16px ui-monospace,Menlo,monospace;white-space:pre-wrap;margin:0}
+.ed{display:grid;grid-template-columns:70px 1.4fr 1fr 1.6fr auto auto;gap:6px;align-items:center;margin-bottom:6px}
+.ee{display:grid;grid-template-columns:2fr 1fr auto;gap:6px;margin-bottom:6px}
+@media print{body>*:not(.ov){display:none}.ov{position:static;background:none}.sh>.hd,.sh>.ft{display:none}}
+@media(max-width:800px){body{flex-direction:column;overflow:auto}.grid{grid-template-columns:1fr 1fr}.ed{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="p" id="L">
+ <div class="r"><input id="q" placeholder="Suchen (Nummer oder Name)" style="flex:1"><button class="s" id="bEdit">Bearbeiten</button><button class="s" id="bRev">Umsatz</button></div>
+ <div class="chips" id="cats"></div><div id="list"></div>
+</div>
+<div class="p" id="R">
+ <div class="r"><b id="no" style="font-size:20px"></b><button class="s" id="bClr">Leeren</button></div>
+ <div id="lines"></div>
+ <div class="r"><span class="sum">Summe</span><span class="sum" id="tot"></span></div>
+ <div class="two"><button id="mA">Abholung</button><button id="mL">Lieferung</button></div>
+ <div class="two"><input id="f_name" placeholder="Name"><input id="f_tel" placeholder="Telefon" inputmode="tel"></div>
+ <div id="addr" style="display:flex;flex-direction:column;gap:8px"><input id="f_street" placeholder="Straße und Hausnummer"><input id="f_city" placeholder="PLZ und Ort"><input id="f_floor" placeholder="Etage"></div>
+ <div class="two" style="grid-template-columns:1fr 1fr 1fr" id="pay"><button data-z="Bar">Bar</button><button data-z="Karte">Karte</button><button data-z="PayPal">PayPal</button></div>
+ <input id="f_hint" placeholder="Hinweis">
+ <div class="two"><button id="bDone">Bestellung abschließen</button><button class="g" id="bBon">Bon anzeigen</button></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),h=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const eur=n=>n.toFixed(2).replace('.',',')+' €',num=n=>n.toFixed(2).replace('.',','),pn=s=>parseFloat(String(s).replace(',','.'))||0;
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const SAMPLE=`# Pizzen
+101;Pizza Margherita;Klein=7,50|Mittel=9,00|Groß=11,50
+102;Pizza Salami;Klein=8,50|Mittel=10,00|Groß=12,50
+103;Pizza Schinken;Klein=8,50|Mittel=10,00|Groß=12,50
+104;Pizza Funghi;Klein=8,50|Mittel=10,00|Groß=12,50
+105;Pizza Hawaii;Klein=9,00|Mittel=10,50|Groß=13,00
+300;Pizza Tonno;Klein=9,00|Mittel=10,50|Groß=13,00
+# Nudelgerichte
+201;Spaghetti Bolognese;9,00
+202;Penne Arrabbiata;8,50
+# Salate
+301;Gemischter Salat;6,50
+# Getränke
+400;Cola;0,33 l=2,50|0,5 l=3,50|1 l=5,50;-
+401;Wasser;0,33 l=2,00|0,75 l=3,50;-
+402;Durstlöscher;0,5 l=3,00;-`;
+const EXT=[["Extra Käse",1],["Oliven",1],["Champignons",1],["Salami",1],["Schinken",1],["Peperoni",.5],["Zwiebeln",.5],["Knoblauch",.5],["Ohne Zwiebeln",0],["Scharf",0]].map(([n,p])=>({n,p}));
+function parse(t){let c="";return t.split("\n").map(l=>l.trim()).filter(Boolean).flatMap(l=>{if(l[0]=="#"){c=l.slice(1).trim();return[]}
+ const p=l.split(";");if(p.length<3)return[];return[{cat:c,nr:p[0],name:p[1],opts:p[2].split("|").map(o=>{const i=o.lastIndexOf("=");return i<0?{l:"",p:pn(o)}:{l:o.slice(0,i),p:pn(o.slice(i+1))}}),ex:p[3]!="-"}]})}
+const optStr=d=>d.opts.map(o=>(o.l?o.l+"=":"")+num(o.p)).join("|");
+let menu=ld("menu",null)||parse(SAMPLE),extras=ld("extras",EXT),hist=ld("hist",[]),S=ld("order",null)||{lines:[],del:false,f:{}},cat="",ov=[];
+const sameDay=(a,b)=>new Date(a).toDateString()==new Date(b).toDateString();
+const today=()=>hist.filter(x=>sameDay(x.t,Date.now())).length;
+const total=o=>o.lines.reduce((s,l)=>s+(l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty,0);
+const save=()=>{sv("order",S);sv("hist",hist)};
+if(!S.lines.length)S.no=today()+1;S.no=S.no||today()+1;
+
+function render(){
+ const cs=[...new Set(menu.map(d=>d.cat))],q=$("#q").value.toLowerCase();
+ $("#cats").innerHTML=["Alle",...cs].map(c=>`<button class="s ${(cat||"Alle")==c?"on":""}" data-c="${h(c)}">${h(c||"Sonstiges")}</button>`).join("");
+ $("#list").innerHTML=menu.map((d,i)=>[d,i]).filter(([d])=>(!cat||d.cat==cat)&&(!q||(d.nr+" "+d.name).toLowerCase().includes(q))).map(([d,i])=>
+  `<div class="d" data-i="${i}"><span><b>${h(d.nr)}</b>${h(d.name)}</span><span class="m">${d.opts.length>1?"ab ":""}${eur(Math.min(...d.opts.map(o=>o.p)))}</span></div>`).join("");
+ $("#no").textContent="Bestellung Nr. "+S.no;
+ $("#lines").innerHTML=S.lines.map((l,i)=>`<div class="l"><div class="r"><span>${h(l.nr+" "+l.name+(l.size?" ("+l.size+")":""))}</span><b>${eur((l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty)}</b></div>
+  ${l.ex.length||l.note?`<div class="m">${h([...l.ex.map(e=>"+ "+e.n),l.note].filter(Boolean).join(", "))}</div>`:""}
+  <div class="r"><span><button class="s" data-q="${i}" data-d="-1">−</button> <b>${l.qty}</b> <button class="s" data-q="${i}" data-d="1">+</button></span>${extras.length?`<button class="s" data-e="${i}">Extras</button>`:""}</div></div>`).join("")||'<div class="m">Noch nichts bestellt</div>';
+ $("#tot").textContent=eur(total(S));
+ document.querySelectorAll("#pay button").forEach(b=>b.className=S.f.pay==b.dataset.z?"g":"");
+ $("#mA").className=S.del?"":"g";$("#mL").className=S.del?"g":"";$("#addr").style.display=S.del?"flex":"none";
+ for(const k of["name","tel","street","city","floor","hint"])if(document.activeElement.id!="f_"+k)$("#f_"+k).value=S.f[k]||"";
+ save();
+}
+function sheet(title,body,foot,cancel="Schließen"){
+ const o=document.createElement("div");o.className="ov";
+ o.innerHTML=`<div class="sh"><div class="hd"><button class="s" data-x>${cancel}</button><b>${h(title)}</b><span></span></div><div class="bd">${body}</div>${foot?`<div class="ft">${foot}</div>`:""}</div>`;
+ o.querySelector("[data-x]").onclick=()=>{o.remove();ov=ov.filter(x=>x!=o)};document.body.append(o);ov.push(o);return o}
+const close=o=>{o.remove();ov=ov.filter(x=>x!=o)};
+
+function pick(d){
+ if(d.opts.length>1){const o=sheet(d.name,`<div class="grid">${d.opts.map((x,i)=>`<button data-o="${i}">${h(x.l)}<small>${eur(x.p)}</small></button>`).join("")}</div>`,"","Abbrechen");
+  o.onclick=e=>{const b=e.target.closest("[data-o]");if(b){close(o);step(d,d.opts[b.dataset.o])}}}
+ else step(d,d.opts[0])}
+function step(d,o){if(d.ex&&extras.length)extraSheet(`1× ${d.name}${o.l?" ("+o.l+")":""}`,[],"",(ex,n)=>add(d,o,ex,n),"Hinzufügen");else add(d,o,[],"")}
+function add(d,o,ex,note){
+ const k=a=>a.map(e=>e.n).sort().join("|"),f=S.lines.find(l=>l.nr==d.nr&&l.size==o.l&&k(l.ex)==k(ex)&&l.note==note);
+ if(f)f.qty++;else S.lines.push({nr:d.nr,name:d.name,size:o.l,price:o.p,qty:1,ex,note});render()}
+function extraSheet(title,ch,note,cb,label){
+ let sel=ch.map(e=>e.n);
+ const o=sheet("Extras",`<h3 style="margin:0 0 12px">${h(title)}</h3><div class="grid">${extras.map((e,i)=>`<button data-i="${i}" class="${sel.includes(e.n)?"on":""}">${h(e.n)}<small>${e.p>0?"+ "+eur(e.p):"gratis"}</small></button>`).join("")}</div>`,`<button class="g" data-ok>${label}</button>`,"Abbrechen");
+ o.onclick=e=>{const b=e.target.closest(".grid button");if(b){const n=extras[b.dataset.i].n;sel=sel.includes(n)?sel.filter(x=>x!=n):[...sel,n];b.classList.toggle("on")}
+  if(e.target.closest("[data-ok]")){close(o);cb(extras.filter(x=>sel.includes(x.n)).map(x=>({n:x.n,p:x.p})),note)}}}
+
+function bon(o,t=Date.now()){
+ const w=32,row=(a,b)=>a.slice(0,w-b.length-1).padEnd(w-b.length)+b,f=o.f,d=new Date(t);
+ const out=["Bestellung Nr. "+o.no,"Datum: "+d.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"}),o.del?"*** LIEFERUNG ***":"*** ABHOLUNG ***"];
+ [f.name,f.tel].forEach(x=>x&&out.push(x));if(o.del){[f.street,f.city].forEach(x=>x&&out.push(x));f.floor&&out.push("Etage: "+f.floor)}
+ f.pay&&out.push("Zahlart: "+f.pay);f.hint&&out.push("Hinweis: "+f.hint);out.push("-".repeat(w));
+ o.lines.forEach(l=>{out.push(row(`${l.qty}x ${l.nr} ${l.name}${l.size?" ("+l.size+")":""}`,num((l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty)));
+  l.ex.forEach(e=>out.push("   + "+e.n+(e.p>0?" ("+num(e.p)+")":"")));l.note&&out.push("   > "+l.note)});
+ out.push("-".repeat(w),row("Summe EUR",num(total(o))));return out.join("\n")}
+const showBon=(o,t)=>{const s=sheet("Bon",`<pre>${h(bon(o,t))}</pre>`,`<button class="g" onclick="print()">Drucken</button>`)};
+
+function revenue(){
+ let per="Tag",off=0;
+ const o=sheet("Umsatz","","");const bd=o.querySelector(".bd");
+ const range=()=>{const n=new Date();let a,b;
+  if(per=="Tag"){a=new Date(n.getFullYear(),n.getMonth(),n.getDate()-off);b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+1)}
+  if(per=="Woche"){const dw=(n.getDay()+6)%7;a=new Date(n.getFullYear(),n.getMonth(),n.getDate()-dw-7*off);b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+7)}
+  if(per=="Monat"){a=new Date(n.getFullYear(),n.getMonth()-off,1);b=new Date(a.getFullYear(),a.getMonth()+1,1)}
+  if(per=="Jahr"){a=new Date(n.getFullYear()-off,0,1);b=new Date(a.getFullYear()+1,0,1)}return[a,b]};
+ const draw=()=>{const[a,b]=range(),L=hist.filter(x=>x.t>=a&&x.t<b);
+  bd.innerHTML=`<div class="chips">${["Tag","Woche","Monat","Jahr"].map(p=>`<button class="s ${p==per?"on":""}" data-p="${p}">${p}</button>`).join("")}</div>
+  <div class="r" style="margin:12px 0"><button class="s" data-n="1">‹</button><b>${a.toLocaleDateString("de-DE")}${per=="Tag"?"":" – "+new Date(b-1).toLocaleDateString("de-DE")}</b><button class="s" data-n="-1">›</button></div>
+  <div class="sum">${eur(L.reduce((s,x)=>s+total(x.o),0))}</div><div class="m">${L.length} Bestellungen</div>${Object.entries(L.reduce((m,x)=>{const k=x.o.f.pay||"ohne Angabe";m[k]=m[k]||[0,0];m[k][0]++;m[k][1]+=total(x.o);return m},{})).map(([k,v])=>`<div class="r m"><span>Zahlart ${h(k)} (${v[0]})</span><span>${eur(v[1])}</span></div>`).join("")}
+  ${L.map((x,i)=>`<div class="d" data-b="${hist.indexOf(x)}"><span>Nr. ${x.o.no} · ${new Date(x.t).toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})} · ${x.o.del?"Lieferung":"Abholung"}</span><b>${eur(total(x.o))}</b></div>`).join("")}`};
+ o.onclick=e=>{const p=e.target.closest("[data-p]"),n=e.target.closest("[data-n]"),b=e.target.closest("[data-b]");
+  if(p){per=p.dataset.p;off=0}if(n)off=Math.max(0,off+ +n.dataset.n);if(b){const x=hist[b.dataset.b];showBon(x.o,x.t);return}draw()};draw()}
+
+function editor(){
+ let tab=0;const o=sheet("Bearbeiten","","","Fertig");const bd=o.querySelector(".bd");
+ const draw=()=>{bd.innerHTML=`<div class="chips" style="margin-bottom:12px"><button class="s ${tab==0?"on":""}" data-t="0">Speisekarte</button><button class="s ${tab==1?"on":""}" data-t="1">Extras</button><button class="s" data-t="2">Sichern / Laden</button></div>`+
+  (tab==0?`<div class="m" style="margin-bottom:8px">Nr · Name · Gruppe · Preise (Größe=Preis, mehrere mit |, z. B. Klein=7,50|Groß=11,50) · Extras</div>`+
+   menu.map((d,i)=>`<div class="ed"><input data-m="${i}" data-k="nr" value="${h(d.nr)}"><input data-m="${i}" data-k="name" value="${h(d.name)}"><input data-m="${i}" data-k="cat" value="${h(d.cat)}"><input data-m="${i}" data-k="opts" value="${h(optStr(d))}"><label class="m"><input type="checkbox" style="width:auto" data-m="${i}" data-k="ex" ${d.ex?"checked":""}> Extras</label><button class="s" data-dm="${i}">✕</button></div>`).join("")+`<button class="g" data-am>+ Gericht hinzufügen</button>`
+  :tab==1?extras.map((e,i)=>`<div class="ee"><input data-x="${i}" data-k="n" value="${h(e.n)}"><input data-x="${i}" data-k="p" value="${num(e.p)}" inputmode="decimal"><button class="s" data-dx="${i}">✕</button></div>`).join("")+`<button class="g" data-ax>+ Extra hinzufügen</button>`
+  :`<div class="m">Zum Sichern den Text kopieren und aufbewahren. Zum Laden einfügen und auf „Laden“ tippen.</div><textarea id="bk" rows="10" style="margin:8px 0">${h(JSON.stringify({menu,extras}))}</textarea><button class="g" data-ld>Laden</button> <button data-rs>Beispielkarte laden</button>`)};
+ o.onclick=e=>{const g=s=>e.target.closest(s);
+  if(g("[data-t]")){tab=+g("[data-t]").dataset.t}
+  else if(g("[data-dm]")){menu.splice(g("[data-dm]").dataset.dm,1)}
+  else if(g("[data-am]")){menu.push({cat:menu.length?menu[menu.length-1].cat:"",nr:"",name:"",opts:[{l:"",p:0}],ex:true})}
+  else if(g("[data-dx]")){extras.splice(g("[data-dx]").dataset.dx,1)}
+  else if(g("[data-ax]")){extras.push({n:"",p:0})}
+  else if(g("[data-ld]")){try{const j=JSON.parse($("#bk").value);menu=j.menu;extras=j.extras}catch(x){alert("Das hat nicht geklappt.");return}}
+  else if(g("[data-rs]")){if(confirm("Aktuelle Karte durch die Beispielkarte ersetzen?"))menu=parse(SAMPLE);else return}
+  else return;sv("menu",menu);sv("extras",extras);draw();render()};
+ o.onchange=e=>{const t=e.target,k=t.dataset.k;if(t.dataset.m!=null){const d=menu[t.dataset.m];
+   if(k=="opts")d.opts=t.value.split("|").map(s=>{const i=s.lastIndexOf("=");return i<0?{l:"",p:pn(s)}:{l:s.slice(0,i).trim(),p:pn(s.slice(i+1))}});
+   else if(k=="ex")d.ex=t.checked;else d[k]=t.value.trim()}
+  else if(t.dataset.x!=null){const x=extras[t.dataset.x];x[k]=k=="p"?pn(t.value):t.value.trim()}
+  else return;sv("menu",menu);sv("extras",extras);render()};
+ draw()}
+
+$("#cats").onclick=e=>{const b=e.target.closest("[data-c]");if(b){cat=b.dataset.c=="Alle"?"":b.dataset.c;render()}};
+$("#q").oninput=render;
+$("#list").onclick=e=>{const d=e.target.closest(".d");if(d)pick(menu[d.dataset.i])};
+$("#lines").onclick=e=>{const q=e.target.closest("[data-q]"),x=e.target.closest("[data-e]");
+ if(q){const l=S.lines[q.dataset.q];l.qty+=+q.dataset.d;if(l.qty<1)S.lines.splice(q.dataset.q,1);render()}
+ if(x){const l=S.lines[x.dataset.e];extraSheet(`${l.qty}× ${l.name}${l.size?" ("+l.size+")":""}`,l.ex,l.note,(ex,n)=>{l.ex=ex;l.note=n;render()},"Speichern")}};
+$("#mA").onclick=()=>{S.del=false;render()};$("#mL").onclick=()=>{S.del=true;render()};
+for(const k of["name","tel","street","city","floor","hint"])$("#f_"+k).oninput=e=>{S.f[k]=e.target.value;save()};
+$("#pay").onclick=e=>{const b=e.target.closest("[data-z]");if(b){S.f.pay=S.f.pay==b.dataset.z?"":b.dataset.z;render()}};
+$("#bBon").onclick=()=>showBon(S);$("#bRev").onclick=revenue;$("#bEdit").onclick=editor;
+$("#bDone").onclick=()=>{if(S.lines.length){hist.unshift({t:Date.now(),o:JSON.parse(JSON.stringify(S))});hist=hist.slice(0,2000)}
+ const m=S.del;S={lines:[],del:m,f:{},no:today()+1};render()};
+$("#bClr").onclick=()=>{S.lines=[];render()};
+render();
+</script></body></html>
