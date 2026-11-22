@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Pizzeria">
+<title>Pizzeria</title>
+<style>
+:root{--bg:#f2f2f5;--card:#fff;--fg:#111;--mut:#777;--in:#eceff3;--ac:#34c759;--bt:#dcdce2;--ln:#d6d6dc;box-sizing:border-box;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mut:#98989f;--in:#0b0b0c;--bt:#3a3a3c;--ln:#38383a}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:17px -apple-system,Helvetica,Arial,sans-serif;display:flex;gap:12px;padding:12px;overflow:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:0;border-radius:26px;background:var(--bt);padding:12px 16px;cursor:pointer;font-weight:600}
+button.g{background:var(--ac);color:#fff}button.s{padding:6px 12px;font-size:15px}
+input,textarea{width:100%;background:var(--in);border:0;border-radius:10px;padding:12px;margin:0}
+.p{background:var(--card);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0}
+#Lc{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}#Rc{width:450px;display:flex;flex-direction:column;gap:12px;min-height:0}#L{flex:1}#R{flex:1}
+#sbar{background:var(--card);border-radius:14px;padding:14px 16px;color:var(--mut);font-size:20px;max-width:460px;width:100%;margin:0 auto;cursor:pointer}
+.hdr{font-size:20px;font-weight:700;margin:14px 4px 2px}.d.sel{background:rgba(52,199,89,.14)}.d .c{color:var(--ac);font-weight:700;margin-left:auto;margin-right:10px}
+.d b{display:inline-block;width:56px;color:var(--fg)}.d{font-size:19px;align-items:center}.ic{display:flex;gap:6px;align-items:center}.gr{color:var(--ac);font-size:15px}
+#mA,#mL{height:54px;font-size:20px}.fb{padding:15px 16px;text-align:left;font-weight:400;border-radius:10px;background:var(--in);color:var(--mut)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button.on{background:var(--ac);color:#fff}
+#list{overflow:auto;flex:1}
+.d{display:flex;justify-content:space-between;gap:8px;padding:14px 4px;border-bottom:1px solid var(--ln);cursor:pointer}
+.d b{color:var(--mut);margin-right:8px}.l{padding:8px 0;border-bottom:1px solid var(--ln)}
+.r{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.m{color:var(--mut);font-size:14px}.sum{font-size:32px;font-weight:800}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:stretch;justify-content:center;padding:env(safe-area-inset-top,0) 0 0;z-index:5}
+.sh{background:var(--card);width:min(960px,100%);margin:12px;border-radius:18px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.sh>.hd{display:flex;justify-content:space-between;align-items:center;padding:12px;gap:8px}
+.sh>.bd{flex:1;overflow:auto;padding:12px}.sh>.ft{padding:12px calc(12px + env(safe-area-inset-bottom,0))}
+.sh>.ft button{width:100%;height:64px;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid button{height:76px;border-radius:38px;line-height:1.2}.grid button.on{background:var(--ac);color:#fff}
+.grid small{display:block;font-weight:400;opacity:.8}
+.vs{display:flex;flex-direction:column;gap:12px;max-width:560px;margin:0 auto}.vs button{height:80px;border-radius:40px;display:flex;justify-content:space-between;align-items:center;padding:0 32px;font-size:24px}.vs span+span{font-weight:400;opacity:.85}
+pre{font:16px ui-monospace,Menlo,monospace;white-space:pre-wrap;margin:0}
+.ed{display:grid;grid-template-columns:70px 1.4fr 1fr 1.6fr auto auto;gap:6px;align-items:center;margin-bottom:6px}
+.ee{display:grid;grid-template-columns:2fr 1fr auto;gap:6px;margin-bottom:6px}
+.kb{display:flex;flex-direction:column;gap:6px;margin-top:auto}.kr{display:flex;gap:6px}.kr button{flex:1;height:52px;border-radius:8px;font-size:24px;font-weight:600;padding:0}.kr .w{flex:4;font-size:19px;font-weight:400}.kr .rt{background:var(--ac);color:#fff;flex:2}.kn{max-width:440px;width:100%;margin:0 auto}.kn .kr button{height:64px;font-size:30px}.dsp{font-size:28px;font-weight:700;min-height:56px;padding:10px 12px;background:var(--in);border-radius:10px;margin:10px 0;overflow-wrap:anywhere}.sg{padding:12px;background:var(--in);border-radius:10px;margin-bottom:6px;cursor:pointer}.sg b{display:block;font-size:19px}
+@page{size:80mm auto;margin:2mm}#pr{display:none}
+@media print{html,body{height:auto;overflow:visible;display:block;padding:0;background:#fff}body>*{display:none!important}body>#pr{display:block!important}.bp{width:100%;padding:0}}
+@media(max-width:800px){body{flex-direction:column;overflow:auto}#Rc{width:auto}.grid{grid-template-columns:1fr 1fr}.ed{grid-template-columns:1fr 1fr}}
+</style><style>*{touch-action:manipulation;-webkit-tap-highlight-color:transparent}</style></head><body>
+<div id="Lc"><div id="sbar">🔍&nbsp; Nummer oder Name suchen</div>
+ <div class="p" id="L"><div class="r"><b class="m" id="spk">Speisekarte</b></div><div class="chips" id="cats"></div><div id="list"></div></div></div>
+<div id="Rc"><div class="r" style="justify-content:flex-end"><button id="bHist" style="flex:1">Bestellungen</button><button id="bRev" style="flex:1">Umsatz</button></div>
+ <div class="p" id="R">
+ <div class="r"><b class="m" id="no"></b><button class="s" id="bReady" style="font-size:17px;padding:9px 14px"></button></div>
+ <div id="lines" style="flex:1;overflow:auto"></div>
+ <div class="r"><span class="sum">Summe</span><span class="sum" id="tot"></span></div>
+ <div class="two"><button id="mA">Abholung</button><button id="mL">Lieferung</button></div>
+ <div class="two"><button class="fb" id="f_name" data-f="name"></button><button class="fb" id="f_tel" data-f="tel"></button></div>
+ <div id="addr" style="display:flex;flex-direction:column;gap:8px"><button class="fb" id="f_street" data-f="street"></button><button class="fb" id="f_city" data-f="city"></button></div>
+ <div class="two"><button class="fb" id="f_floor" data-f="floor"></button><button class="fb" id="f_pay" data-f="pay"></button></div>
+ <button class="fb" id="f_hint" data-f="hint"></button>
+ <div class="two"><button id="bDone">Bestellung abschließen</button><button class="g" id="bBon">Bon anzeigen</button></div>
+ </div></div>
+<div id="pr"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),h=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const eur=n=>n.toFixed(2).replace('.',',')+' €',num=n=>n.toFixed(2).replace('.',','),pn=s=>parseFloat(String(s).replace(',','.'))||0;
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const SAMPLE=`#Pizzen
+300;Pizza Margherita;Klein=4,00|Mittel=6,00|Jumbo=13,00
+301;Pizza Napoli;Klein=6,50|Mittel=9,50|Jumbo=18,00
+302;Pizza Funghi;Klein=5,50|Mittel=7,50|Jumbo=15,00
+303;Pizza Cipolla;Klein=5,00|Mittel=7,50|Jumbo=15,00
+304;Pizza Salami;Klein=6,00|Mittel=8,50|Jumbo=16,00
+305;Pizza Carciofi;Klein=5,50|Mittel=8,00|Jumbo=16,00
+306;Pizza Spinaci;Klein=5,50|Mittel=7,50|Jumbo=15,00
+307;Pizza Prosciutto;Klein=5,50|Mittel=8,00|Jumbo=16,00
+308;Pizza Bolognese;Klein=6,00|Mittel=8,50|Jumbo=17,00
+309;Pizza Tonno;Klein=6,00|Mittel=8,50|Jumbo=17,00
+310;Pizza Regina;Klein=6,50|Mittel=9,00|Jumbo=18,00
+311;Pizza Hawaii;Klein=6,50|Mittel=9,00|Jumbo=18,00
+312;Pizza Romana;Klein=6,50|Mittel=9,50|Jumbo=18,00
+313;Pizza Ischia;Klein=6,50|Mittel=9,00|Jumbo=18,00
+314;Pizza Italia;Klein=6,50|Mittel=9,00|Jumbo=18,00
+315;Pizza Quattro Stagioni;Klein=6,50|Mittel=9,00|Jumbo=18,00
+316;Pizza Capricciosa;Klein=7,00|Mittel=9,50|Jumbo=20,00
+317;Pizza Vegetale;Klein=6,50|Mittel=9,00|Jumbo=20,00
+318;Pizza Diavolo;Klein=7,00|Mittel=10,50|Jumbo=20,00
+319;Pizza Shoarma Special;Klein=7,50|Mittel=11,00|Jumbo=23,00
+320;Pizza Shoarma;Klein=7,00|Mittel=10,00|Jumbo=20,00
+321;Pizza Frutti di Mare;Klein=6,50|Mittel=9,00|Jumbo=18,00
+322;Pizza Rucola;Klein=7,00|Mittel=10,00|Jumbo=22,00
+323;Pizza Pollo BBQ;Klein=7,00|Mittel=10,00|Jumbo=22,00
+324;Pizza Hollandaise;Klein=6,50|Mittel=9,50|Jumbo=20,00
+325;Calzone I (scharf);Mittel=10,50
+326;Calzone II;Mittel=10,50
+327;Calzone III;Mittel=11,50
+328;Pizza Quattro Formaggi;Klein=6,50|Mittel=9,00|Jumbo=19,00
+329;Pizza Sucuk;Klein=6,50|Mittel=9,00|Jumbo=19,00
+330;Pizza Da Angelo;Klein=7,50|Mittel=9,50|Jumbo=20,00
+331;Pizza Inferno;Klein=6,50|Mittel=9,50|Jumbo=19,00
+332;Pizza Africa;Klein=6,50|Mittel=9,50|Jumbo=19,00
+333;Pizza Broccoli;Klein=7,50|Mittel=10,50|Jumbo=20,00
+334;Pizza Lachs;Klein=7,50|Mittel=10,50|Jumbo=20,00
+335;Pizza Shrimps;Klein=6,50|Mittel=9,00|Jumbo=20,00
+336;Pizza Scampi;Klein=7,00|Mittel=9,50|Jumbo=20,00
+340;Gyros Pizza;Klein=7,00|Mittel=9,50|Jumbo=20,00
+341;Pizza Spezial;Klein=7,50|Mittel=10,00|Jumbo=20,00
+342;Pizza San Gennaro;Klein=7,50|Mittel=10,50|Jumbo=21,00
+343;Pizza Bosciaola;Klein=7,50|Mittel=10,50|Jumbo=21,00
+344;Pizza Mista;Klein=7,50|Mittel=10,00|Jumbo=21,00
+345;Pizza Algreco;Klein=7,50|Mittel=10,00|Jumbo=20,00
+346;Pizza Roswitha;Klein=7,50|Mittel=10,00|Jumbo=20,00
+347;Pizza türkisch Spezial;Klein=7,50|Mittel=10,50|Jumbo=20,00
+348;Pizza Panner (scharf);Klein=7,50|Mittel=10,50|Jumbo=20,00
+349;Pizza Bombay Spezial (scharf);Klein=7,00|Mittel=9,00|Jumbo=20,00
+350;Pizza Bregenzer;Klein=7,50|Mittel=10,50|Jumbo=20,00
+351;Bauern Pizza;Klein=7,50|Mittel=10,50|Jumbo=20,00
+352;Pizza Calamari;Klein=6,50|Mittel=9,00|Jumbo=20,00
+353;Pizza Salmone;Klein=7,00|Mittel=10,00|Jumbo=20,00
+354;Pizza Italiana;Klein=7,50|Mittel=10,00|Jumbo=20,00
+355;Pizza Millenium;Klein=7,50|Mittel=10,50|Jumbo=21,00
+356;Pizza Patatine;Klein=6,00|Mittel=8,00|Jumbo=18,00
+357;Pizza Gadar (scharf);Klein=7,50|Mittel=10,50|Jumbo=20,00
+358;Pizza Karnail;Klein=7,00|Mittel=10,00|Jumbo=20,00
+359;Pizza Spargel (scharf);Klein=7,50|Mittel=10,50|Jumbo=20,00
+360;Pizza Deutsch Spezial;Klein=6,00|Mittel=8,00|Jumbo=18,00
+361;Pizza Zola;Klein=6,50|Mittel=9,50|Jumbo=19,00
+#Nudelgerichte
+377;Spaghetti Napoli;7,50
+378;Spaghetti Bolognese;8,50
+379;Spaghetti Aglio-Olio Picante;8,50
+380;Spaghetti Calabrese;9,50
+381;Spaghetti Arrabiata;8,50
+382;Spaghetti Frutti di Mare;10,00
+383;Spaghetti Tonno;9,50
+384;Spaghetti Carbonara;9,50
+385;Spaghetti Polo;10,50
+386;Spaghetti Putaneska;10,00
+387;Spaghetti Hähnchenfleisch;10,50
+388;Spaghetti Garnel;10,00
+389;Spaghetti Vegetaria;10,00
+390;Spaghetti Gyros;10,00
+391;Penne Napoli;7,50
+392;Penne Bolognese;8,50
+393;Penne Matriciana;9,50
+394;Penne Salmone;10,50
+395;Penne Florenz;10,50
+396;Penne Pfifferling;10,50
+397;Penne Braccio Differro;9,50
+398;Penne Quattro Formaggi;9,50
+399;Penne Spezial;10,50
+400;Penne Shrimps;10,50
+401;Penne Curry;10,50
+402;Penne Vongele;9,50
+403;Penne Gyros;10,00
+404;Penne Mafioso;10,50
+410;Tagliatelle Pesto;8,00
+411;Tagliatelle Bregenzer;9,50
+412;Tagliatelle Salmone;10,50
+413;Tagliatelle Steinpilzen;9,00
+414;Tagliatelle Spezial;10,50
+415;Tagliatelle Pfifferling;10,50
+416;Tagliatelle Quattro Stagioni;10,50
+417;Tagliatelle Bolognese;8,50
+420;Tortellini Alla Panna;9,00
+421;Tortellini Bolognese;9,00
+422;Tortellini Shrimps;10,00
+423;Tortellini Broccoli;10,00
+424;Tortellini Spinaci;9,50
+425;Tortellini Gyros;10,00
+426;Tortellini Hawaii;10,00
+428;Gnocchi Pesto;9,00
+429;Gnocchi Zola;9,00
+430;Gnocchi 4 Formaggi;10,00
+431;Gnocchi Angelo;11,00
+432;Gnocchi Bolognese;11,00
+433;Gnocchi Polo;11,00
+435;Lasagne;10,00
+436;Cannelloni;10,00
+437;Rigatoni Squisiti;10,00
+440;Piatto Triccolore;12,00
+441;Pasta Mista Panna;9,50
+442;Pasta Mista Bolognese;9,00
+#Schnitzel
+460;Schnitzel Wiener Art;10,00
+461;Zigeuner Schnitzel;11,50
+462;Zwiebel Schnitzel;11,50
+463;Pfeffer Schnitzel;12,00
+464;Hawaii Schnitzel;12,00
+465;Bolognese Schnitzel;11,50
+466;Rahm Schnitzel;12,00
+467;Hähnchen Schnitzel;12,00
+468;Zwiebel Hähnchen;12,00
+469;Salti Amboca;12,00
+470;Scalopina Orangensaft-Sauce;12,00
+471;Scalopina Weißwein-Zitronen-Sauce;12,00
+#Fleisch & Grill
+480;Schweinefilet vom Grill;14,00
+481;Schweinefilet Metaxasauce;15,00
+482;Schweinefilet Astagon;15,00
+483;Schweinefilet Zola;15,00
+489;Lamm Korma;13,00
+490;Lamm-Kotelett Butter-Knoblauch;14,00
+491;Lamm-Kotelett Weißwein-Zitrone;14,00
+492;Lamm-Kotelett Butter-Knoblauch-Zitrone;14,00
+493;Lamm Curry (scharf);13,00
+494;Lamm Palak;13,00
+495;Lamm Gemüse;13,00
+496;Grill Teller;15,00
+497;Bregenzer Grill Teller;28,00
+498;Bregenzer XL Grill Teller (4 Pers.);54,00
+500;Souvlaki (2 Spieße);11,50
+501;Cevapcici (3 Stück);11,50
+502;Bifteki;11,50
+505;Gyros Metaxa-Sauce;13,00
+506;Gyros Pfeffersauce;13,00
+508;Gyros Box;5,50
+509;Gyros Tzatziki;11,00
+510;Gyros Spezial;13,00
+511;Gyros Navpreet;13,00
+515;Hähnchenfilet Kräuter;11,00
+516;Hähnchenfilet Gorgonzola;13,00
+517;Hähnchenfilet Pfeffersauce;13,00
+#Burger
+520;American Burger;9,50
+521;XXL Burger;10,50
+522;Arte Della Casa;7,50
+523;Burger;5,00
+524;Fisch Burger;7,00
+525;Hamburger;7,00
+526;Cheeseburger;7,50
+527;Chilli Burger;7,50
+528;Chicken Burger;6,50
+529;Chicken Barbecuesauce;7,00
+530;Chicken Cheeseburger;7,00
+531;Vegetarischer Burger;7,00
+#Snacks
+606;Nan-Brot;2,00
+607;Farm Potatoes;3,50
+608;Kroketten (8 Stück);3,50
+609;Curry-Frikadelle mit Pommes;5,00
+610;Krispy Chicken (5 Stück);5,50
+611;Krispy Chicken (5 St.) mit Pommes;7,00
+612;Kartoffel Tasche (2 Stück);3,50
+613;Gemischte Snacks;15,00
+614;Bratwurst mit Pommes;4,50
+615;Currywurst mit Pommes;5,00
+616;Pommes;2,50
+617;Frikadelle;3,00
+618;Hot Peppers (3 Stück);3,50
+619;Chicken Wings (6 Stück);4,50
+620;Chicken Wings (6 St.) mit Pommes;6,50
+621;Chicken Wings (9 St.) mit Pommes;8,00
+622;Chicken Nuggets (6 Stück);4,00
+623;Chicken Nuggets (6 St.) mit Pommes;6,00
+624;Chicken Nuggets (9 St.) mit Pommes;7,50
+#Indisch
+625;Paneer Sabji;12,00
+626;Paneer Palak;12,00
+627;Shahi Paneer;12,00
+628;Rajmah;10,00
+629;Chana Alu;10,00
+630;Chilli Paneer;12,00
+631;Sabji Korma;10,50
+632;Dal Makhani;10,00
+640;Chicken Curry;11,00
+641;Chicken Chilli;12,50
+642;Chicken Jalfrezi (sehr scharf);12,50
+643;Chicken Palak;12,50
+644;Chicken Gemüse;12,50
+645;Chicken Bombay;11,50
+646;Chicken Korma;12,00
+647;Butterchicken;12,50
+650;Chicken Biryani;11,00
+651;Lamm Biryani;13,50
+652;Veg. Biryani;10,00
+653;Risotto Krabben;12,00
+654;Scampi Biryani (9 Stück);12,00
+655;Risotto Frutti di Mare;12,00
+#Vorspeisen & Salate
+660;Antipasto de Mare;10,00
+661;Carpaccio di Manzo;10,00
+662;Schafskäse;8,00
+663;Caprese;8,00
+670;Salat Lachs;Klein=7,00|Groß=9,50
+671;Salat Athen;Klein=7,00|Groß=9,50
+672;Tanduri Salat;Groß=10,00
+673;Calamari Salat;Klein=6,50|Groß=11,50
+674;Gemischter Salat;Klein=4,00|Groß=6,50
+675;Proscuitto Salat;Klein=6,50|Groß=8,50
+676;Tonno Salat;Klein=6,50|Groß=8,50
+677;Salat Monte Carlo;Klein=7,00|Groß=9,50
+678;Salat Imotex;Klein=6,50|Groß=9,00
+679;Salat Kreta;Klein=6,50|Groß=8,50
+680;Di Cetrioli (Gurkensalat);Groß=6,00
+681;Di Pomodori (Tomatensalat);Groß=6,00
+682;Salat Bregenzer;Klein=7,00|Groß=9,50
+#Pizzabrötchen & Baguettes
+685;Pizzabrötchen mit Kräutercreme;2,50
+686;Pizzabrötchen Käse;6,50
+687;Pizzabrötchen Gyros Zwiebeln;7,50
+688;Pizzabrötchen Broccoli Mais Hähnchen;8,00
+689;Pizzabrötchen Sucuk Spinat;8,00
+690;Pizzabrötchen Prosciutto;7,50
+691;Pizzabrötchen Thunfisch;7,50
+692;Pizzabrötchen Spinat Weichkäse;7,50
+693;Pizzabrötchen Lammfleisch Zwiebeln;8,00
+694;Pizzabrötchen Salami;7,50
+695;Pizzabrötchen Salami Prosciutto;8,00
+696;Pizzabrötchen Sucuk;7,50
+697;Pizzabrötchen Sardellen Zwiebeln;8,00
+698;Pizzabrötchen Hähnchen BBQ Paprika Mais;8,50
+700;Baguette Käse;5,50
+701;Baguette Prosciutto;6,50
+702;Baguette Thunfisch;6,50
+703;Baguette Krabben;7,00
+704;Baguette Hähnchen;7,00
+705;Baguette Sucuk;6,50
+706;Baguette Gyros;7,50
+#Aufläufe & Fisch
+710;Kartoffel Auflauf;11,00
+711;Broccoli Champignon Auflauf (veg.);10,00
+712;Frische Gemüse Auflauf (veg.);10,00
+713;Broccoli Kartoffel Auflauf (veg.);10,00
+714;Spinat Kartoffel Auflauf (veg.);10,50
+715;Lachs Spinat Auflauf;12,00
+720;Rotbarschfilet Senf-Dillsauce;12,50
+721;Rotbarschfilet Kapern-Pfeffer-Sauce;12,50
+722;Rotbarschfilet gegrillt;11,00
+723;Baby Calamari Tomaten-Kapernsauce;12,50
+724;Baby Calamari gegrillt Spinat;12,50
+725;Baby Calamari Weißwein-Butter-Sauce;12,50
+726;Calamari Romana mit Pommes;11,50
+727;Scampi alla Griglia (7 Stück);15,50
+728;Fisch Curry Lachsfilet;14,00
+729;Lachsfilet Mixgemüse Weißweinsauce;14,50
+730;Garnelen Curry (9 Stück);13,00
+#Dessert
+750;Tiramisu (hausgemacht);4,00
+751;Tartuffo;4,00
+752;Spaghetti Eis;2,50
+#Getränke
+760;Red Bull 0,25 l;3,00
+761;Cola / Fanta / Sprite / Mezzo Mix 0,33 l;2,00
+762;Cola / Fanta / Sprite / Mezzo Mix / Apfelschorle 1,0 l;3,00
+763;Wasser 0,5 l;1,50
+764;Wasser 1,0 l;2,00
+765;Bier König Pilsener / Diebels Alt / Krombacher 0,5 l;2,50
+766;Durstlöscher Multi oder Orange;1,50
+767;Monster Energy 0,5 l;3,50
+768;Energydrink 0,2 l;1,50
+740;Lambrusco 0,7 l;10,00
+741;Chardonnay 0,7 l;10,00
+742;Pinot Grigio 0,7 l;10,00
+743;Frascati 0,7 l;10,00
+744;ital. Rot- oder Weißwein 0,7 l;5,50
+745;Merlot Rotwein 0,7 l;10,00
+#Angebote
+S1;Single Angebot (gr. Pizza od. Pasta, kl. Salat, 6 Pizzabrötchen);12,50
+S2;Partner Angebot (2 gr. Pizzen od. 2 Pasta, kl. Salat, Tiramisu, 6 Pizzabrötchen);24,00
+S3;Kiddy Box (4 Nuggets mit Pommes);6,50
+S4;Party Pizza Blech Margherita 60x40;23,00
+S5;Party Pizza Blech 1 Belag;26,00
+S6;Party Pizza Blech 2 Belege;30,00
+S7;Party Pizza Blech 3 Belege;33,00`;
+const EXT=[["Extra Belag 24cm",1],["Extra Belag 28cm",2],["Extra Belag 40cm",4],["Extra Belag Fleisch/Fisch 24cm",1.5],["Extra Belag Fleisch/Fisch 28cm",2.5],["Extra Belag Fleisch/Fisch 40cm",4.5],["Sauce (Ketchup/Mayo/Curry/BBQ/Süß-sauer)",.5],["Tzatziki",2],["Kräutercreme",.5],["Basmatireis",3],["Beilagensalat",2.5],["Mit Käse überbacken",1],["Hähnchen statt Schwein",1],["Scharf",0],["Ohne Zwiebeln",0]].map(([n,p])=>({n,p}));
+function parse(t){let c="";return t.split("\n").map(l=>l.trim()).filter(Boolean).flatMap(l=>{if(l[0]=="#"){c=l.slice(1).trim();return[]}
+ const p=l.split(";");if(p.length<3)return[];return[{cat:c,nr:p[0],name:p[1],opts:p[2].split("|").map(o=>{const i=o.lastIndexOf("=");return i<0?{l:"",p:pn(o)}:{l:o.slice(0,i),p:pn(o.slice(i+1))}}),ex:p[3]!="-"}]})}
+const optStr=d=>d.opts.map(o=>(o.l?o.l+"=":"")+num(o.p)).join("|");
+let menu=ld("menu",null)||parse(SAMPLE),extras=ld("extras",EXT),hist=ld("hist",[]),S=ld("order",null)||{lines:[],del:false,f:{}},cat="",ov=[];
+const fix=o=>{o.f=o.f||{};o.lines=(o.lines||[]).map(l=>({...l,ex:l.ex||[],note:l.note||"",price:l.price||0,qty:l.qty||1}));return o};
+hist=hist.filter(x=>x&&x.o).map(x=>({...x,o:fix(x.o)}));fix(S);
+const sameDay=(a,b)=>new Date(a).toDateString()==new Date(b).toDateString();
+const today=()=>hist.filter(x=>sameDay(x.t,Date.now())).length;
+const total=o=>o.lines.reduce((s,l)=>s+(l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty,0);
+const save=()=>{sv("order",S);sv("hist",hist);window.syncPush&&window.syncPush()};
+function applyRemote(c,o){if(c){menu=c.menu;extras=c.extras;sv("menu",menu);sv("extras",extras)}
+ if(o){hist=o.filter(x=>x&&x.o).map(x=>({...x,o:fix(x.o)}));sv("hist",hist);if(!S.lines.length)S.no=today()+1}
+ render()}
+if(!S.lines.length)S.no=today()+1;S.no=S.no||today()+1;
+
+function render(){
+ const cs=[...new Set(menu.map(d=>d.cat))],q="";
+ $("#cats").innerHTML=["Alle",...cs].map(c=>`<button class="s ${(cat||"Alle")==c?"on":""}" data-c="${h(c)}">${h(c||"Sonstiges")}</button>`).join("");
+ let lc="";$("#list").innerHTML=menu.map((d,i)=>[d,i]).filter(([d])=>!cat||d.cat==cat).map(([d,i])=>{
+  const n=S.lines.filter(l=>l.nr==d.nr).reduce((a,l)=>a+l.qty,0),hd=d.cat!=lc&&d.cat?`<div class="hdr">${h(d.cat)}</div>`:"";lc=d.cat;
+  return hd+`<div class="d ${n?"sel":""}" data-i="${i}"><b>${h(d.nr)}</b><span>${h(d.name)}</span><span class="c">${n?"✓ "+n+"×":""}</span><span class="m">${d.opts.length>1?"ab ":""}${eur(Math.min(...d.opts.map(o=>o.p)))}</span></div>`}).join("");
+ $("#no").textContent="Bestellung Nr. "+S.no;rdUpdate();
+ $("#lines").innerHTML=S.lines.map((l,i)=>{const dt=[...l.ex.map(e=>"+ "+e.n),l.note].filter(Boolean).join(", ");return `<div class="l"><div class="r"><div><div style="font-size:19px">${l.qty}× ${h(l.nr+" "+l.name+(l.size?" ("+l.size+")":""))}</div>${dt?`<div class="gr">${h(dt)}</div>`:""}<div class="m">${eur((l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty)}</div></div>
+  <span class="ic">${extras.length?`<button class="s g" data-e="${i}">Extras</button>`:""}<button class="s" data-q="${i}" data-d="-1">−</button><button class="s" data-q="${i}" data-d="1">+</button><button class="s" data-q="${i}" data-d="-999">🗑</button></span></div></div>`}).join("")||'<div class="m">Noch nichts bestellt.</div>';
+ $("#tot").textContent=eur(total(S));
+ $("#bBon").disabled=!S.lines.length;$("#bBon").style.opacity=S.lines.length?1:.4;$("#f_floor").style.display=S.del?"":"none";$("#f_pay").style.gridColumn=S.del?"":"1 / 3";
+ $("#mA").className=S.del?"":"g";$("#mL").className=S.del?"g":"";$("#addr").style.display=S.del?"flex":"none";
+ for(const k in FD){const b=$("#f_"+k);b.textContent=S.f[k]||FD[k][0];b.style.color=S.f[k]?"var(--fg)":"var(--mut)"}
+ save();
+}
+function sheet(title,body,foot,cancel="Schließen"){
+ const o=document.createElement("div");o.className="ov";
+ o.innerHTML=`<div class="sh"><div class="hd"><button class="s" data-x>${cancel}</button><b>${h(title)}</b><span></span></div><div class="bd">${body}</div>${foot?`<div class="ft">${foot}</div>`:""}</div>`;
+ o.querySelector("[data-x]").onclick=()=>{o.remove();ov=ov.filter(x=>x!=o)};document.body.append(o);ov.push(o);return o}
+const close=o=>{o.remove();ov=ov.filter(x=>x!=o)};
+
+function pick(d,q=1){
+ if(d.opts.length>1){const o=sheet(d.name+": Größe wählen",`<div class="vs">${d.opts.map((x,i)=>`<button data-o="${i}"><span>${h(x.l)}</span><span>${eur(x.p)}</span></button>`).join("")}</div>`,"","Abbrechen");
+  o.onclick=e=>{const b=e.target.closest("[data-o]");if(b){close(o);step(d,d.opts[b.dataset.o],q)}}}
+ else step(d,d.opts[0],q)}
+function step(d,o,q=1){if(d.ex&&extras.length)extraSheet(`${q}× ${d.name}${o.l?" ("+o.l+")":""}`,[],"",(ex,n,one)=>{if(one&&q>1){add(d,o,ex,n,1);add(d,o,[],"",q-1)}else add(d,o,ex,n,q)},"Hinzufügen",q);else add(d,o,[],"",q)}
+function add(d,o,ex,note,q=1){
+ const k=a=>a.map(e=>e.n).sort().join("|"),f=S.lines.find(l=>l.nr==d.nr&&l.size==o.l&&k(l.ex)==k(ex)&&l.note==note);
+ if(f)f.qty+=q;else S.lines.push({nr:d.nr,name:d.name,size:o.l,price:o.p,qty:q,ex,note});render()}
+function extraSheet(title,ch,note,cb,label,qty=1){
+ let sel=ch.map(e=>e.n),one=false;
+ const o=sheet("Extras",`<h3 style="margin:0 0 12px">${h(title)}</h3>${qty>1?`<div class="chips" style="margin-bottom:12px"><button class="s on" data-one="0">Alle ${qty}×</button><button class="s" data-one="1">Nur 1×</button></div>`:""}<div class="grid">${extras.map((e,i)=>`<button data-i="${i}" class="${sel.includes(e.n)?"on":""}">${h(e.n)}<small>${e.p>0?"+ "+eur(e.p):"gratis"}</small></button>`).join("")}</div>`,`<button class="g" data-ok>${label}</button>`,"Abbrechen");
+ o.onclick=e=>{const w=e.target.closest("[data-one]");if(w){one=w.dataset.one=="1";o.querySelectorAll("[data-one]").forEach(x=>x.classList.toggle("on",x==w))}const b=e.target.closest(".grid button");if(b){const n=extras[b.dataset.i].n;sel=sel.includes(n)?sel.filter(x=>x!=n):[...sel,n];b.classList.toggle("on")}
+  if(e.target.closest("[data-ok]")){close(o);cb(extras.filter(x=>sel.includes(x.n)).map(x=>({n:x.n,p:x.p})),note,one)}}}
+
+const stamp=t=>new Date(t).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+const nrm=x=>x.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+function bon(o,t=Date.now()){
+ const w=32,row=(a,b)=>a.slice(0,w-b.length-1).padEnd(w-b.length)+b,f=o.f,d=new Date(t);
+ const out=["Bestellung Nr. "+o.no,"Datum: "+stamp(t),o.del?"*** LIEFERUNG ***":"*** ABHOLUNG ***"];o.rd&&out.push("Fertig bis: "+hm(o.rd)+" Uhr");
+ [f.name,f.tel].forEach(x=>x&&out.push(x));if(o.del){[f.street,f.city].forEach(x=>x&&out.push(x));f.floor&&out.push("Etage: "+f.floor)}
+ f.pay&&out.push("Zahlart: "+f.pay);f.hint&&out.push("Hinweis: "+f.hint);out.push("-".repeat(w));
+ o.lines.forEach(l=>{out.push(row(`${l.qty}x ${l.nr} ${l.name}${l.size?" ("+l.size+")":""}`,num((l.price+l.ex.reduce((a,e)=>a+e.p,0))*l.qty)));
+  l.ex.forEach(e=>out.push("   + "+e.n+(e.p>0?" ("+num(e.p)+")":"")));l.note&&out.push("   > "+l.note)});
+ out.push("-".repeat(w),row("Summe EUR",num(total(o))));return out.join("\n")}
+function qrSvg(o){const f=o.f;if(!o.del||!(f.street||"").trim()||typeof qrcode=="undefined")return"";
+ try{const q=qrcode(0,"M");q.addData("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([f.street,f.city].filter(Boolean).join(", ")));q.make();
+ return `<div class="q">${q.createSvgTag({cellSize:4,margin:0})}<small>Adresse scannen</small></div>`}catch(e){return""}}
+const BCSS=".bp{background:#fff;color:#000;width:302px;max-width:100%;margin:0 auto;padding:12px 10px;font-family:ui-monospace,Menlo,monospace}.bp .bh{font-size:20px;font-weight:800;margin-bottom:4px}.bp pre{font-size:14px;line-height:1.3;color:#000}.bp .q{text-align:center;margin-top:12px;line-height:0}.bp .q small{display:block;line-height:1.3;font-size:12px;margin-top:4px}";
+document.head.insertAdjacentHTML("beforeend","<style>"+BCSS+"</style>");
+const hm=t=>new Date(t).toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+const bonHtml=(o,t)=>{const L=bon(o,t).split("\n");return `<div class="bp"><div class="bh">${h(L[0])}</div><pre>${h(L.slice(1).join("\n"))}</pre>${qrSvg(o)}</div>`};
+function doPrint(o,t){$("#pr").innerHTML=bonHtml(o,t);try{print()}catch(e){}}
+const showBon=(o,t)=>{sheet("Bon",bonHtml(o,t),`<button class="g" data-pr>Drucken</button>`).onclick=e=>{const b=e.target.closest("[data-pr]");if(!b)return;if(b.disabled)return;
+ b.disabled=true;b.textContent="⏳ Druck wird vorbereitet …";b.style.opacity=".7";
+ const rs=()=>{b.disabled=false;b.textContent="Drucken";b.style.opacity=""};
+ window.addEventListener("afterprint",rs,{once:true});setTimeout(rs,15000);
+ doPrint(o,t)}};
+function rdUpdate(){const b=$("#bReady");if(!b)return;const r=S.rd;
+ if(!r){b.textContent="⏱ Fertig bis";b.style.background="";b.style.color="";return}
+ const m=Math.ceil((r-Date.now())/6e4);
+ b.textContent="⏱ "+hm(r)+" Uhr · "+(m>=0?"noch "+m+" Min":(-m)+" Min überfällig");
+ b.style.background=m<0?"#ff453a":m<=5?"#ff9f0a":"var(--ac)";b.style.color="#fff"}
+function readySheet(){
+ const o=sheet("Fertig bis","",`<button data-clr>Zeit entfernen</button>`,"Schließen"),bd=o.querySelector(".bd");
+ bd.innerHTML=`<div class="m" style="margin-bottom:8px">Bestellung soll fertig sein in …</div><div class="grid">${[10,15,20,30,45,60].map(m=>`<button data-m="${m}">${m} Min<small>${hm(Date.now()+m*6e4)} Uhr</small></button>`).join("")}</div>
+ <div class="m" style="margin:16px 0 8px">… oder Uhrzeit wählen</div><div class="r"><input type="time" id="rt" value="${S.rd?new Date(S.rd).toTimeString().slice(0,5):""}" style="font-size:24px"><button class="g" data-ok style="margin-left:12px;white-space:nowrap">Übernehmen</button></div>`;
+ o.onclick=e=>{const m=e.target.closest("[data-m]");
+  if(m){S.rd=Date.now()+ +m.dataset.m*6e4;close(o);render()}
+  else if(e.target.closest("[data-clr]")){delete S.rd;close(o);render()}
+  else if(e.target.closest("[data-ok]")){const[x,y]=o.querySelector("#rt").value.split(":").map(Number);if(isNaN(x))return;const d=new Date();d.setHours(x,y,0,0);if(d<Date.now())d.setDate(d.getDate()+1);S.rd=+d;close(o);render()}}}
+
+const bonRow=x=>`<div class="d" data-b="${hist.indexOf(x)}"><div><b style="width:auto;display:block">${stamp(x.t)}</b><span class="m">Nr. ${x.o.no}, ${x.o.del?"Lieferung":"Abholung"}${x.o.f.name?", "+h(x.o.f.name):""}</span></div><span class="ic"><b style="width:auto">${eur(total(x.o))}</b><button class="s" data-del="${hist.indexOf(x)}">✕</button></span></div>`;
+const sum=L=>L.reduce((a,x)=>a+total(x.o),0),ln=(a,b,big)=>`<div class="r" style="padding:${big?6:2}px 0;font-size:${big?28:19}px;${big?"font-weight:800":""}"><span>${a}</span><b>${b}</b></div>`;
+function bonClick(e,redraw){const dl=e.target.closest("[data-del]"),b=e.target.closest("[data-b]");
+ if(dl){if(confirm("Diese Bestellung löschen?")){hist.splice(+dl.dataset.del,1);if(!S.lines.length)S.no=today()+1;save();render();redraw()}return}
+ if(b){const x=hist[b.dataset.b];showBon(x.o,x.t)}}
+function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);return Math.ceil(((t-Date.UTC(t.getUTCFullYear(),0,1))/864e5+1)/7)}
+function revenue(){
+ let per="Tag",off=0;const o=sheet("Umsatz","","","Fertig"),bd=o.querySelector(".bd");
+ const range=()=>{const n=new Date();let a,b;
+  if(per=="Tag"){a=new Date(n.getFullYear(),n.getMonth(),n.getDate()-off);b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+1)}
+  if(per=="Woche"){const dw=(n.getDay()+6)%7;a=new Date(n.getFullYear(),n.getMonth(),n.getDate()-dw-7*off);b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+7)}
+  if(per=="Monat"){a=new Date(n.getFullYear(),n.getMonth()-off,1);b=new Date(a.getFullYear(),a.getMonth()+1,1)}
+  if(per=="Jahr"){a=new Date(n.getFullYear()-off,0,1);b=new Date(a.getFullYear()+1,0,1)}return[a,b]};
+ const draw=()=>{const[a,b]=range(),e=new Date(b-1),L=hist.filter(x=>x.t>=a&&x.t<b),f=d=>d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"}),fy=d=>d.toLocaleDateString("de-DE");
+  const lab=per=="Tag"?(off?"":"Heute · ")+a.toLocaleDateString("de-DE",{weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"}):per=="Woche"?`KW ${isoWeek(a)} · ${f(a)}. – ${fy(e)}`:per=="Monat"?a.toLocaleDateString("de-DE",{month:"long",year:"numeric"}):String(a.getFullYear());
+  const P=L.filter(x=>!x.o.del),D=L.filter(x=>x.o.del),pm={};L.forEach(x=>{const k=(x.o.f.pay||"").trim()||"Ohne Angabe";pm[k]=pm[k]||[];pm[k].push(x)});
+  bd.innerHTML=`<div class="chips" style="margin-bottom:12px">${["Tag","Woche","Monat","Jahr"].map(p=>`<button class="s ${p==per?"on":""}" style="flex:1" data-p="${p}">${p}</button>`).join("")}</div>
+  <div class="r" style="margin-bottom:14px"><button class="s" data-n="1">‹</button><b style="text-align:center">${lab}</b><button class="s" data-n="-1" ${off?"":"disabled style='opacity:.3'"}>›</button></div>
+  <div class="m" style="margin:8px 0">ZUSAMMENFASSUNG</div>${ln("Umsatz",eur(sum(L)),1)}${ln("Bestellungen",L.length)}${ln("Ø pro Bestellung",eur(L.length?sum(L)/L.length:0))}${ln(`Abholung (${P.length})`,eur(sum(P)))}${ln(`Lieferung (${D.length})`,eur(sum(D)))}
+  ${Object.entries(pm).sort((x,y)=>sum(y[1])-sum(x[1])).map(([k,v])=>ln(`Zahlart ${h(k)} (${v.length})`,eur(sum(v)))).join("")}
+  <div class="m" style="margin:16px 0 4px">BONS (${L.length})</div>${L.map(bonRow).join("")||'<div class="m">Keine Bestellungen in diesem Zeitraum.</div>'}`};
+ o.onclick=e=>{const p=e.target.closest("[data-p]"),n=e.target.closest("[data-n]");
+  if(p){per=p.dataset.p;off=0;draw()}else if(n){off=Math.max(0,off+ +n.dataset.n);draw()}else bonClick(e,draw)};draw()}
+function editor(){
+ let tab=0;const o=sheet("Bearbeiten","","","Fertig");const bd=o.querySelector(".bd");
+ const draw=()=>{bd.innerHTML=`<div class="chips" style="margin-bottom:12px"><button class="s ${tab==0?"on":""}" data-t="0">Speisekarte</button><button class="s ${tab==1?"on":""}" data-t="1">Extras</button><button class="s" data-t="2">Sichern / Laden</button></div>`+
+  (tab==0?`<div class="m" style="margin-bottom:8px">Nr · Name · Gruppe · Preise (Größe=Preis, mehrere mit |, z. B. Klein=7,50|Groß=11,50) · Extras</div>`+
+   menu.map((d,i)=>`<div class="ed"><input data-m="${i}" data-k="nr" value="${h(d.nr)}"><input data-m="${i}" data-k="name" value="${h(d.name)}"><input data-m="${i}" data-k="cat" value="${h(d.cat)}"><input data-m="${i}" data-k="opts" value="${h(optStr(d))}"><label class="m"><input type="checkbox" style="width:auto" data-m="${i}" data-k="ex" ${d.ex?"checked":""}> Extras</label><button class="s" data-dm="${i}">✕</button></div>`).join("")+`<button class="g" data-am>+ Gericht hinzufügen</button>`
+  :tab==1?extras.map((e,i)=>`<div class="ee"><input data-x="${i}" data-k="n" value="${h(e.n)}"><input data-x="${i}" data-k="p" value="${num(e.p)}" inputmode="decimal"><button class="s" data-dx="${i}">✕</button></div>`).join("")+`<button class="g" data-ax>+ Extra hinzufügen</button>`
+  :`<div class="m">Zum Sichern den Text kopieren und aufbewahren. Zum Laden einfügen und auf „Laden“ tippen.</div><textarea id="bk" rows="10" style="margin:8px 0">${h(JSON.stringify({menu,extras}))}</textarea><button class="g" data-ld>Laden</button> <button data-rs>Beispielkarte laden</button>`)};
+ o.onclick=e=>{const g=s=>e.target.closest(s);
+  if(g("[data-t]")){tab=+g("[data-t]").dataset.t}
+  else if(g("[data-dm]")){menu.splice(g("[data-dm]").dataset.dm,1)}
+  else if(g("[data-am]")){menu.push({cat:menu.length?menu[menu.length-1].cat:"",nr:"",name:"",opts:[{l:"",p:0}],ex:true})}
+  else if(g("[data-dx]")){extras.splice(g("[data-dx]").dataset.dx,1)}
+  else if(g("[data-ax]")){extras.push({n:"",p:0})}
+  else if(g("[data-ld]")){try{const j=JSON.parse($("#bk").value);menu=j.menu;extras=j.extras}catch(x){alert("Das hat nicht geklappt.");return}}
+  else if(g("[data-rs]")){if(confirm("Aktuelle Karte und Extras durch die Beispielkarte ersetzen?")){menu=parse(SAMPLE);extras=JSON.parse(JSON.stringify(EXT))}else return}
+  else return;sv("menu",menu);sv("extras",extras);window.syncCfg&&window.syncCfg();draw();render()};
+ o.onchange=e=>{const t=e.target,k=t.dataset.k;if(t.dataset.m!=null){const d=menu[t.dataset.m];
+   if(k=="opts")d.opts=t.value.split("|").map(s=>{const i=s.lastIndexOf("=");return i<0?{l:"",p:pn(s)}:{l:s.slice(0,i).trim(),p:pn(s.slice(i+1))}});
+   else if(k=="ex")d.ex=t.checked;else d[k]=t.value.trim()}
+  else if(t.dataset.x!=null){const x=extras[t.dataset.x];x[k]=k=="p"?pn(t.value):t.value.trim()}
+  else return;sv("menu",menu);sv("extras",extras);window.syncCfg&&window.syncCfg();render()};
+ draw()}
+
+$("#cats").onclick=e=>{const b=e.target.closest("[data-c]");if(b){cat=b.dataset.c=="Alle"?"":b.dataset.c;render()}};
+$("#list").onclick=e=>{const d=e.target.closest(".d");if(d)pick(menu[d.dataset.i])};
+$("#lines").onclick=e=>{const q=e.target.closest("[data-q]"),x=e.target.closest("[data-e]");
+ if(q){const l=S.lines[q.dataset.q];l.qty+=+q.dataset.d;if(l.qty<1)S.lines.splice(q.dataset.q,1);render()}
+ if(x){const l=S.lines[x.dataset.e];extraSheet(`${l.qty}× ${l.name}${l.size?" ("+l.size+")":""}`,l.ex,l.note,(ex,n,one)=>{if(one&&l.qty>1){l.qty--;S.lines.splice(+x.dataset.e+1,0,{...l,qty:1,ex,note:n})}else{l.ex=ex;l.note=n}render()},"Speichern",l.qty)}};
+$("#mA").onclick=()=>{S.del=false;render()};$("#mL").onclick=()=>{S.del=true;render()};
+const FD={name:["Name","Name"],tel:["Telefon","Telefon"],street:["Straße und Hausnummer","Straße"],city:["PLZ und Ort","Ort"],floor:["Etage","Etage"],pay:["Zahlart","Zahlart"],hint:["Hinweis","Hinweis"]};
+document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>fieldEditor(b.dataset.f));
+function fieldEditor(k){
+ let caps=false,sug=[],tm,tk=0,st="";
+ const o=sheet("Bestellung","","","Fertig"),bd=o.querySelector(".bd");bd.style.cssText+="display:flex;flex-direction:column";
+ const ks=()=>S.del?["name","tel","street","city","floor","pay","hint"]:["name","tel","pay","hint"];
+ const nxt=()=>ks()[ks().indexOf(k)+1];
+ const up=()=>{const v=S.f[k]||"";return caps||(k!="tel"&&k!="floor"&&(!v||v.endsWith(" ")))};
+ const kk=(c,cl="")=>{const t=c.length==1&&c!="ß"&&up()?c.toUpperCase():c;return `<button class="${cl}" data-k="${h(t)}">${h(t)}</button>`};
+ const row=l=>`<div class="kr">${[...l].map(c=>kk(c)).join("")}</div>`;
+ const rt=`<button class="rt" data-ret>${nxt()?"Weiter":"Fertig"}</button>`,bs='<button data-bs>⌫</button>';
+ const sgHtml=()=>sug.length?sug.map((x,i)=>`<div class="sg" data-g="${i}"><b>${h(x.road)}</b><span class="m">${h(x.sub)}</span></div>`).join(""):`<div class="m" style="margin-bottom:10px">${h(st||"Anfang der Straße tippen, Vorschlag wählen, dann Hausnummer ergänzen.")}</div>`;
+ function draw(){const v=S.f[k]||"";const numeric=k=="tel"||k=="floor";
+  let mid="";
+  if(k=="street")mid=`<div id="sgw">${sgHtml()}</div>`;
+  if(k=="pay")mid=`<div class="grid" style="margin-top:8px">${["Bar","Karte"].map(z=>`<button data-z="${z}" class="${v==z?"on":""}">${z}</button>`).join("")}</div>`;
+  const kb=k=="pay"?"":numeric?`<div class="kb kn">${row("123")}${row("456")}${row("789")}<div class="kr">${k=="tel"?kk("+"):"<span style='flex:1'></span>"}${kk("0")}${bs}</div><div class="kr">${rt}</div></div>`
+   :`<div class="kb">${row("1234567890")}${row("qwertzuiopü")}${row("asdfghjklöä")}<div class="kr"><button data-sh style="${caps?"background:#0a84ff;color:#fff":""}">⇧</button>${[..."yxcvbnmß"].map(c=>kk(c)).join("")}${bs}</div><div class="kr">${kk("-")}${kk(".")}${kk(",")}${kk("/")}<button class="w" data-k=" ">Leerzeichen</button>${rt}</div></div>`;
+  bd.innerHTML=`<div class="chips" style="flex-wrap:nowrap">${ks().map(f=>`<button class="s ${f==k?"on":""}" style="flex:1" data-t="${f}">${FD[f][1]}</button>`).join("")}</div><div class="dsp" style="${v?"":"color:var(--mut)"}">${v?h(v)+"▏":FD[k][0]}</div>${mid}${kb}`}
+ async function geoPhoton(v,cr,cy,near){
+  const r=await fetch("https://photon.komoot.io/api/?lang=de&limit=20&osm_tag=highway&lat=51.43&lon=6.77"+(near?"&bbox=6.55,51.1,7.0,51.55":"")+"&q="+encodeURIComponent(v+(cr&&!near?" "+cr:"")));
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return((await r.json()).features||[]).map(f=>f.properties||{}).filter(p=>p.name).map(p=>({road:p.name,city:p.city||p.county||p.locality||p.district||"",pc:p.postcode||""}))}
+ async function geoNom(v,cr,near){
+  const cs=near?(cr?[cr]:["Duisburg","Düsseldorf"]):[cr];
+  const rs=await Promise.all(cs.map(async c=>{const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10&countrycodes=de&accept-language=de&q="+encodeURIComponent(v+" "+c));if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}));
+  return rs.flat().filter(x=>x.address&&x.address.road).map(x=>{const a=x.address;return{road:a.road,city:a.city||a.town||a.village||a.municipality||"",pc:a.postcode||""}})}
+ function look(){clearTimeout(tm);const v=S.f.street||"";if(k!="street"||v.trim().length<2||/\d/.test(v)||v.endsWith(" ")){sug=[];st="";return}
+  const cr=(S.f.city||"").replace(/\d/g,"").trim(),cy=nrm(cr),near=!cy||/duisburg|dusseldorf/.test(cy),me=++tk,qn=nrm(v.trim());
+  const show=()=>{const w=bd.querySelector("#sgw");if(w)w.innerHTML=sgHtml()};
+  st="Suche …";show();
+  tm=setTimeout(async()=>{let all=[],er="";
+   try{all=await geoPhoton(v.trim(),cr,cy,near)}catch(e){er=String(e&&e.message||e)}
+   if(me!=tk)return;
+   all=all.filter(p=>nrm(p.road).includes(qn));
+   if(!all.length){try{all=(await geoNom(v.trim(),cr,near)).filter(p=>nrm(p.road).includes(qn))}catch(e){er=er||String(e&&e.message||e)}}
+   if(me!=tk)return;
+   const seen={},fl=all.filter(x=>{const c=nrm(x.city);return near?(cy?c.includes(cy):/duisburg|dusseldorf/.test(c)):true});
+   sug=(fl.length?fl:all).filter(x=>{const q=x.road+x.city;return seen[q]?false:seen[q]=1}).slice(0,8).map(x=>({...x,sub:[x.pc,x.city].filter(Boolean).join(" ")}));
+   st=sug.length?"":er?"Vorschläge nicht erreichbar ("+er+"). Straße einfach selbst eintippen.":"Keine Treffer. Straße einfach selbst eintippen.";show()},500)}
+ o.onclick=e=>{const g=s=>e.target.closest(s);let c;
+  if(c=g("[data-t]")){k=c.dataset.t;sug=[];look()}
+  else if(c=g("[data-k]")){S.f[k]=(S.f[k]||"")+c.dataset.k;caps=false;look()}
+  else if(g("[data-bs]")){S.f[k]=(S.f[k]||"").slice(0,-1);look()}
+  else if(g("[data-sh]"))caps=!caps;
+  else if(c=g("[data-g]")){const x=sug[c.dataset.g];S.f.street=x.road+" ";if(x.city)S.f.city=[x.pc,x.city].filter(Boolean).join(" ");sug=[]}
+  else if(c=g("[data-z]")){S.f.pay=c.dataset.z;const n=nxt();if(n)k=n;else{close(o);render();return}}
+  else if(g("[data-ret]")){const n=nxt();if(n){k=n;sug=[]}else{close(o);render();return}}
+  else return;render();draw()};
+ const cl=o.querySelector("[data-x]");cl.addEventListener("click",render);draw()}
+$("#sbar").onclick=()=>{let buf="",qty=1,err=false,caps=false;const o=sheet("Suche","","","Abbrechen"),bd=o.querySelector(".bd");
+ const M=d=>{const q=buf.trim();if(!q)return false;if(/^\d+$/.test(q))return d.nr.startsWith(q);const w=d.name.split(" ");return q.split(/\s+/).every(t=>w.some(x=>nrm(x).startsWith(nrm(t))))};
+ const F=()=>menu.filter(M),cur=()=>{const f=F(),q=buf.trim();return q?(f.find(d=>d.nr==q)||(f.length==1?f[0]:null)):null};
+ const go=d=>{close(o);setTimeout(()=>pick(d,qty),50)};
+ const K=(c,cl="")=>{const t=c.length==1&&c!="ß"&&caps?c.toUpperCase():c;return `<button class="${cl}" data-k="${h(t)}">${h(t)}</button>`},R=l=>`<div class="kr">${[...l].map(c=>K(c)).join("")}</div>`,bs='<button data-bs>⌫</button>',ok='<button class="rt" data-ok>OK</button>';
+ function draw(){const f=F(),c=cur(),q=buf.trim();
+  const sg=err?'<div style="color:#ff453a">Nicht eindeutig oder nicht gefunden</div>':!q?'<div class="m">Nummer tippen oder Namen beginnen</div>':!f.length?'<div class="m">Nichts gefunden</div>':f.slice(0,4).map(d=>`<div class="d" data-s="${d.nr}" style="border-radius:10px;margin-bottom:6px;border:0;background:${c&&c.nr==d.nr?"rgba(52,199,89,.25)":"var(--in)"}"><span><b>${h(d.nr)}</b>${h(d.name)}</span><span class="m">${d.opts.length>1?"ab ":""}${eur(Math.min(...d.opts.map(x=>x.p)))}</span></div>`).join("")+(f.length>4?`<div class="m">… ${f.length-4} weitere, weiter tippen</div>`:"");
+  bd.innerHTML=`<div class="r" style="gap:14px"><div class="dsp" style="flex:1;margin:0;${buf?"":"color:var(--mut)"}">${buf?h(buf):"Nummer oder Name"}</div><span class="ic"><button class="s" data-qm>−</button><b style="font-size:22px;min-width:52px;text-align:center">${qty}×</b><button class="s" data-qp>+</button></span></div>
+  <div style="height:230px;margin:12px 0;overflow:hidden">${sg}</div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-top:auto"><div class="kb kn" style="flex:1;min-width:300px">${R("123")}${R("456")}${R("789")}<div class="kr">${ok}${K("0")}${bs}</div></div>
+  <div class="kb" style="flex:2;min-width:440px">${R("qwertzuiopü")}${R("asdfghjklöä")}<div class="kr"><button data-sh style="${caps?"background:#0a84ff;color:#fff":""}">⇧</button>${[..."yxcvbnmß"].map(x=>K(x)).join("")}${bs}</div><div class="kr">${K("-")}${K(".")}${K(",")}${K("/")}<button class="w" data-k=" ">Leerzeichen</button>${ok}</div></div></div>`}
+ bd.style.cssText+="display:flex;flex-direction:column";
+ o.onclick=e=>{const g=x=>e.target.closest(x);let c;err=false;
+  if(c=g("[data-k]")){buf+=c.dataset.k;caps=false}else if(g("[data-bs]"))buf=buf.slice(0,-1);else if(g("[data-sh]"))caps=!caps;
+  else if(g("[data-qm]"))qty=Math.max(1,qty-1);else if(g("[data-qp]"))qty=Math.min(20,qty+1);
+  else if(c=g("[data-s]")){go(menu.find(d=>d.nr==c.dataset.s));return}
+  else if(g("[data-ok]")){if(buf.trim()){const d=cur();if(d){go(d);return}err=true}}else return;draw()};
+ draw()};
+$("#bHist").onclick=()=>{const o=sheet("Bestellungen","","","Fertig"),bd=o.querySelector(".bd"),dr=()=>{const T=hist.filter(x=>sameDay(x.t,Date.now()));bd.innerHTML=`<div class="r" style="font-weight:700;font-size:19px;margin-bottom:8px"><span>Heute: ${T.length} Bestellungen</span><b>${eur(sum(T))}</b></div>`+(hist.slice(0,300).map(bonRow).join("")||'<div class="m">Noch keine abgeschlossenen Bestellungen.</div>')};o.onclick=e=>bonClick(e,dr);dr()};
+let pt;$("#spk").onpointerdown=()=>{pt=setTimeout(editor,1000)};$("#spk").onpointerup=$("#spk").onpointerleave=()=>clearTimeout(pt);
+$("#bBon").onclick=()=>showBon(S);$("#bRev").onclick=revenue;$("#bReady").onclick=readySheet;
+$("#bDone").onclick=()=>{if(S.lines.length){hist.unshift({t:Date.now(),o:JSON.parse(JSON.stringify(S))});hist=hist.slice(0,2000)}
+ const m=S.del;S={lines:[],del:m,f:{},no:today()+1};render()};
+setInterval(rdUpdate,20000);
+render();
+</script><div id="cl" style="position:fixed;left:10px;bottom:6px;font-size:13px;color:var(--mut);z-index:4;cursor:pointer">☁ lokal</div>
+<div id="lg" class="ov" style="display:none;align-items:center;z-index:9"><div class="sh" style="max-width:420px;margin:12px auto;padding:20px;gap:12px;flex:none;overflow:visible">
+<b style="font-size:22px">Anmelden</b><input id="lgE" type="text" placeholder="Benutzername" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"><input id="lgP" type="password" placeholder="Passwort" autocomplete="current-password">
+<div id="lgErr" style="color:#ff453a;min-height:20px;font-size:15px"></div><button class="g" id="lgGo" style="height:52px">Anmelden</button><button id="lgSkip">Nur lokal weiter</button></div></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,deleteDoc,collection,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyAVzQHLMWFgHs50E-eahQ052F2pvHoZeYg",authDomain:"pizzeria-bregenzer.firebaseapp.com",projectId:"pizzeria-bregenzer",storageBucket:"pizzeria-bregenzer.firebasestorage.app",messagingSenderId:"1024829646459",appId:"1:1024829646459:web:1fbbc1133cfeef2e9564de"});
+const auth=getAuth(app);let db;try{db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db=getFirestore(app)}
+let nobon=new Set(),known=new Map(),unsubs=[],first=true,ready=false,cfgKnown="",pt;
+const st=t=>{$("#cl").textContent=t},err=e=>st("☁ Fehler: "+(e.code||e.message));
+function push(){if(!ready||!auth.currentUser)return;const cur=new Map(hist.map(x=>[x.t,JSON.stringify(x)]));
+ cur.forEach((j,t)=>{if(known.get(t)!==j||nobon.has(t)){known.set(t,j);nobon.delete(t);let b="";try{const x=hist.find(y=>y.t==t);b=bon(x.o,x.t)}catch(e){}setDoc(doc(db,"orders",String(t)),{t,json:j,bon:b}).catch(err)}});
+ [...known.keys()].forEach(t=>{if(!cur.has(t)){known.delete(t);deleteDoc(doc(db,"orders",String(t))).catch(err)}})}
+function pushCfg(){if(!auth.currentUser)return;const d={menu:JSON.stringify(menu),extras:JSON.stringify(extras),t:Date.now()},j=d.menu+"|"+d.extras;if(j===cfgKnown)return;cfgKnown=j;setDoc(doc(db,"config","main"),d).catch(err)}
+window.syncPush=()=>{clearTimeout(pt);pt=setTimeout(push,300)};window.syncCfg=pushCfg;
+function start(){first=true;ready=false;
+ unsubs.push(onSnapshot(doc(db,"config","main"),s=>{if(s.exists()){const d=s.data(),j=d.menu+"|"+d.extras;if(j!==cfgKnown){cfgKnown=j;applyRemote({menu:JSON.parse(d.menu),extras:JSON.parse(d.extras)},null)}}else if(!s.metadata.fromCache)pushCfg()},err));
+ unsubs.push(onSnapshot(collection(db,"orders"),s=>{const m=new Map();nobon=new Set();s.forEach(x=>{const d=x.data();m.set(d.t,d.json);if(d.bon===undefined)nobon.add(d.t)});known=m;
+  let l=[...m.values()].map(j=>JSON.parse(j));if(first){first=false;l=l.concat(hist.filter(x=>!m.has(x.t)))}
+  l.sort((a,b)=>b.t-a.t);applyRemote(null,l);ready=true;push();st("☁ verbunden")},err))}
+function stop(){unsubs.forEach(u=>u());unsubs=[];ready=false;known=new Map();cfgKnown=""}
+let skip=false;
+onAuthStateChanged(auth,u=>{if(u){$("#lg").style.display="none";st("☁ verbinde …");start()}else{stop();st("☁ lokal");if(!skip)$("#lg").style.display="flex"}});
+try{$("#lgE").value=localStorage.getItem("syncEmail")||""}catch(e){}
+$("#lgGo").onclick=async()=>{let e=$("#lgE").value.trim().toLowerCase();if(e&&!e.includes("@"))e=e+"@pizzeria.local";$("#lgErr").textContent="";try{localStorage.setItem("syncEmail",e.replace("@pizzeria.local",""))}catch(x){}
+ try{await signInWithEmailAndPassword(auth,e,$("#lgP").value);$("#lgP").value=""}catch(x){const c=x.code||"";$("#lgErr").textContent=c.includes("invalid")||c.includes("wrong")||c.includes("user-not")?"Benutzername oder Passwort falsch":c.includes("unauthorized")?"Domain nicht freigegeben (Authentication → Einstellungen)":"Fehler: "+(c||x.message)}};
+$("#lgSkip").onclick=()=>{skip=true;$("#lg").style.display="none"};
+$("#cl").onclick=()=>{if(auth.currentUser){if(confirm("Abmelden? Die App arbeitet dann nur lokal."))signOut(auth)}else{skip=false;$("#lg").style.display="flex"}};
+</script>
+</body></html>
